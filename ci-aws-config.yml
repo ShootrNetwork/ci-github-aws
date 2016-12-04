@@ -1,0 +1,42 @@
+region: 'eu-west-1'
+
+branch_config:
+  - branch: 'develop'
+    asg: 'asg-tst'
+    deploy: true
+    test_and_build: true
+    build_docker: true
+    docker_tag: 'TST'
+    upload_to_s3: true
+
+  - branch: 'master'
+    asg: 'asg-pre'
+    deploy: true
+    test_and_build: false
+    build_docker: false
+    docker_tag: 'PRE'
+    upload_to_s3: false
+
+  - branch: 'pro-'
+    asg: 'asg-pro'
+    deploy: true
+    test_and_build: false
+    build_docker: false
+    docker_tag: 'PRO'
+    upload_to_s3: false
+
+  - branch: 'prohotfix-'
+    asg: 'asg-pro'
+    deploy: true
+    test_and_build: true
+    build_docker: true
+    docker_tag: 'PRO'
+    upload_to_s3: true
+
+  - branch: 'dev-'
+    asg: 'asg-dev'
+    deploy: false
+    test_and_build: true
+    build_docker: false
+    docker_tag: 'DEV'
+    upload_to_s3: false
