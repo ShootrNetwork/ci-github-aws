@@ -8,12 +8,13 @@ import (
 
 var awsSession *session.Session
 
-func ConfigureAWS(region string) {
+func InitAWSSession(region string) {
 	awsSession = session.New()
-	cred := credentials.NewChainCredentials([]credentials.Provider{
+
+	awsSession.Config.Credentials = credentials.NewChainCredentials([]credentials.Provider{
 		&credentials.EnvProvider{},
 	})
-	awsSession.Config.Credentials = cred
+
 	awsSession.Config.Region = aws.String(region)
 	awsSession.Config.WithMaxRetries(aws.UseServiceDefaultRetries)
 }

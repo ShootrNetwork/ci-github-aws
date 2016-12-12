@@ -7,7 +7,7 @@ type Params struct {
 }
 
 type Config struct {
-	Region string `yaml:"region"`
+	AWS AWS `yaml:"aws"`
 
 	PathInDocker string `yaml:"path_in_docker"`
 
@@ -28,6 +28,11 @@ type Config struct {
 		DockerTagValue string `yaml:"docker_tag_value"`
 		UploadToS3     bool   `yaml:"upload_to_s3"`
 	} `yaml:"branch_config"`
+}
+
+type AWS struct {
+	Region         string `yaml:"region"`
+	ActifactBucket string `yaml:"artifact_bucket"`
 }
 
 type Git struct {

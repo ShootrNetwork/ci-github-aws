@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -21,7 +22,7 @@ func listBuckets() {
 	log.Println(result)
 }
 
-func uploadToS3(source string, destination string, bucketName string, region string) {
+func uploadToS3(bucket string, source string, destination string) {
 
 	file, err := os.Open(source)
 	if err != nil {
@@ -29,22 +30,21 @@ func uploadToS3(source string, destination string, bucketName string, region str
 	}
 	defer file.Close()
 
-	fileInfo, _ := file.Stat()
-	var size int64 = fileInfo.Size()
-	buffer := make([]byte, size)
-	file.Read(buffer)
-	fileBytes := bytes.NewReader(buffer)
+	byteArray, err := ioutil.ReadAll(file)
 
 	s3Client := s3.New(awsSession)
+
 	resp, err := s3Client.PutObject(&s3.PutObjectInput{
-		Bucket:        aws.String(bucketName),
-		Key:           aws.String(destination),
-		Body:          fileBytes,
-		ContentLength: &size,
+		Bucket: aws.String(bucket),
+		Key:    aws.String(destination),
+		ACL:    aws.String("public-read"),
+		Body:   bytes.NewReader(byteArray),
 	})
 
+	log.Printf("Uploading file to %s%s", bucket, destination)
+
 	if err != nil {
-		log.Fatal("Failed to upload to s3", err)
+		log.Fatal("Failed to upload to s3: ", err)
 	} else {
 		log.Println(resp)
 	}

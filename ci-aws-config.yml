@@ -1,4 +1,6 @@
-region: 'eu-west-1'
+aws:
+  region: 'eu-west-1'
+  artifact_bucket: 'shootr-releases'
 
 path_in_docker: '/ci'
 
@@ -53,4 +55,4 @@ branch_config:
     build_docker: false
     docker_tag: true
     docker_tag_value: 'DEV'
-    upload_to_s3: false
+    upload_to_s3: true
