@@ -1,5 +1,11 @@
 region: 'eu-west-1'
 
+default_deploy: false
+default_test_and_build: true
+default_build_docker: false
+default_docker_tag: null
+default_upload_to_s3: false
+
 branch_config:
   - branch: 'develop'
     asg: 'asg-tst'
