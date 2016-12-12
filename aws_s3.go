@@ -6,9 +6,20 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
+
+func listBuckets() {
+	s3Client := s3.New(awsSession)
+
+	var params *s3.ListBucketsInput
+	result, err := s3Client.ListBuckets(params)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	log.Println(result)
+}
 
 func uploadToS3(source string, destination string, bucketName string, region string) {
 
@@ -24,9 +35,8 @@ func uploadToS3(source string, destination string, bucketName string, region str
 	file.Read(buffer)
 	fileBytes := bytes.NewReader(buffer)
 
-	svc := s3.New(session.New(&aws.Config{Region: aws.String(region)}))
-
-	resp, err := svc.PutObject(&s3.PutObjectInput{
+	s3Client := s3.New(awsSession)
+	resp, err := s3Client.PutObject(&s3.PutObjectInput{
 		Bucket:        aws.String(bucketName),
 		Key:           aws.String(destination),
 		Body:          fileBytes,

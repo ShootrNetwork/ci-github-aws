@@ -10,10 +10,12 @@ func main() {
 
 	switch params.Command {
 	case "test_and_build":
-		testAndBuild(params)
+		//testAndBuild(params)
 
 	case "upload_to_s3":
-		uploadToS3(source, destination, Params.Config.Region)
+		ConfigureAWS(params.Config.Region)
+		//uploadToS3(source, destination, Params.Config.Region)
+		listBuckets()
 
 	case "docker_build":
 	case "docker_tag":
