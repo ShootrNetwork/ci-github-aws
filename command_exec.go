@@ -1,18 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"sync"
+	"time"
 )
 
-func exe_cmd_wait(command string) {
+func exe_cmd_wait(command string, timeout time.Duration) {
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 
 	go exe_cmd(command, wg)
 
-	wg.Wait()
+	if waitTimeout(wg, timeout) {
+		fmt.Println("Command timed out")
+	}
 }
 
 func exe_cmd(cmd string, wg *sync.WaitGroup) {
@@ -26,4 +30,18 @@ func exe_cmd(cmd string, wg *sync.WaitGroup) {
 	}
 
 	wg.Done()
+}
+
+func waitTimeout(wg *sync.WaitGroup, timeout time.Duration) bool {
+	c := make(chan struct{})
+	go func() {
+		defer close(c)
+		wg.Wait()
+	}()
+	select {
+	case <-c:
+		return false // completed normally
+	case <-time.After(timeout):
+		return true // timed out
+	}
 }
