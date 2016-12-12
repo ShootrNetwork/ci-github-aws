@@ -9,6 +9,8 @@ type Params struct {
 type Config struct {
 	Region string `yaml:"region"`
 
+	PathInDocker string `yaml:"path_in_docker"`
+
 	Default_deploy           bool   `yaml:"default_deploy"`
 	Default_test_and_build   bool   `yaml:"default_test_and_build"`
 	Default_build_docker     bool   `yaml:"default_build_docker"`

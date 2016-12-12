@@ -1,5 +1,7 @@
 region: 'eu-west-1'
 
+path_in_docker: '/ci'
+
 default_deploy: false
 default_test_and_build: true
 default_build_docker: false
