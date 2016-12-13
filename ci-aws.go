@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"log"
-)
+import "log"
 
 func main() {
 	log.Println("Starting...")
@@ -17,7 +14,7 @@ func main() {
 		//testAndBuild(params)
 
 	case "upload_to_s3":
-		uploadArtifactsToS3(params.Git.Commit, params.Config.AWS)
+		uploadArtifactsToS3(params)
 
 	case "docker_build":
 	case "docker_tag":
@@ -25,14 +22,4 @@ func main() {
 	default:
 		panic("unrecognized command")
 	}
-}
-
-func uploadArtifactsToS3(commit string, aws AWS) {
-	InitAWSSession(aws.Region)
-	bucket := aws.ActifactBucket
-	//listBuckets()
-
-	uploadToS3(bucket, "./shootr-api/target/shootr-api.jar", fmt.Sprintf("artifacts/shootr-api.jar.%s", commit))
-	uploadToS3(bucket, "./shootr-services/target/shootr-services.jar", fmt.Sprintf("artifacts/shootr-services.jar.%s", commit))
-	uploadToS3(bucket, "./shootr-backoffice/target/shootr-backoffice.jar", fmt.Sprintf("artifacts/shootr-backoffice.jar.%s", commit))
 }
