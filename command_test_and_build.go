@@ -9,7 +9,7 @@ import (
 func testAndBuild(params Params) {
 	branchCheck := BranchCheck{Params: params}
 
-	if branchCheck.should_execute_test_and_build() {
+	if branchCheck.shouldExecuteTestAndBuild() {
 		start := time.Now()
 		log.Println("Test and build start...")
 

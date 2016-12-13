@@ -9,20 +9,20 @@ import (
 func dockerBuildComponents(params Params) {
 	branchCheck := BranchCheck{Params: params}
 
-	if branchCheck.should_execute_docker_build() {
+	if branchCheck.shouldExecuteDockerBuild() {
 		start := time.Now()
 		log.Println("Docker build start...")
 
 		commit := params.Git.Commit
 
-		buildAndPushDocker("api", commit)
-		buildAndPushDocker("services", commit)
-		buildAndPushDocker("backoffice", commit)
+		for _, component := range components {
+			buildAndPushDocker(component, commit)
+		}
 
-		log.Printf("Test and build done in %s", time.Since(start))
+		log.Printf("Docker build done in %s", time.Since(start))
 
 	} else {
-		log.Println("Skipping Test and build")
+		log.Println("Skipping Docker build")
 	}
 }
 

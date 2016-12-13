@@ -2,6 +2,12 @@ package main
 
 import "log"
 
+var components = []string{
+	"api",
+	"services",
+	"backoffice",
+}
+
 func main() {
 	log.Println("Starting...")
 
@@ -20,6 +26,8 @@ func main() {
 		dockerBuildComponents(params)
 
 	case "docker_tag":
+		dockerTagComponents(params)
+
 	case "deploy":
 	default:
 		panic("unrecognized command")

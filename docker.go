@@ -19,3 +19,17 @@ func dockerPush(imageName string) {
 	exe_cmd_wait(command, 10*time.Minute)
 	log.Printf("push command: %s", command)
 }
+
+func dockerPull(imageName string) {
+	log.Printf("pulling docker image %s", imageName)
+	command := fmt.Sprintf("docker pull %s", imageName)
+	exe_cmd_wait(command, 10*time.Minute)
+	log.Printf("pull command: %s", command)
+}
+
+func dockerTag(from string, to string) {
+	log.Printf("taging docker image %s to %s", from, to)
+	command := fmt.Sprintf("docker tag %s %s", from, to)
+	exe_cmd_wait(command, 2*time.Minute)
+	log.Printf("tag command: %s", command)
+}
