@@ -9,7 +9,7 @@ import (
 func dockerBuildComponents(params Params) {
 	branchCheck := BranchCheck{Params: params}
 
-	if branchCheck.should_execute_test_and_build() {
+	if branchCheck.should_execute_docker_build() {
 		start := time.Now()
 		log.Println("Docker build start...")
 
