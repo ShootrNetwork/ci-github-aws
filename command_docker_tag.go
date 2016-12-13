@@ -27,6 +27,8 @@ func dockerTagComponents(params Params) {
 			}(component, commit, tagValue)
 		}
 
+		wg.Wait()
+
 		log.Printf("Docker tag done in %s", time.Since(start))
 
 	} else {
