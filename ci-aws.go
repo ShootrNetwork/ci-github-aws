@@ -11,12 +11,14 @@ func main() {
 	switch params.Command {
 
 	case "test_and_build":
-		//testAndBuild(params)
+		testAndBuild(params)
 
 	case "upload_to_s3":
 		uploadArtifactsToS3(params)
 
 	case "docker_build":
+		dockerBuildComponents(params)
+
 	case "docker_tag":
 	case "deploy":
 	default:
