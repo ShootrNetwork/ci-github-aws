@@ -1,6 +1,10 @@
 package main
 
-import "io/ioutil"
+import (
+	"fmt"
+	"io/ioutil"
+	"time"
+)
 
 func check(err error) {
 	if err != nil {
@@ -24,4 +28,22 @@ func copyFile(src string, dst string) {
 	// Write data to dst
 	err = ioutil.WriteFile(dst, data, 0644)
 	check(err)
+}
+
+func doWithTimeout(timeout time.Duration, timeBetweenExecutions time.Duration, action func() error) (err error) {
+	quitTimer := time.NewTimer(timeout)
+	defer quitTimer.Stop()
+	for {
+		if actErr := action(); actErr != nil {
+			err = actErr
+			return
+		}
+		select {
+		case <-quitTimer.C:
+			err = fmt.Errorf("timed out after %v", timeout)
+			return
+		default:
+			time.Sleep(timeBetweenExecutions)
+		}
+	}
 }
