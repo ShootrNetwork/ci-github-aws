@@ -16,19 +16,21 @@ func main() {
 
 	switch params.Command {
 
-	case "test_and_build":
+	case cmdTestAndBuild:
 		testAndBuild(params)
 
-	case "upload_to_s3":
+	case cmdUploadToS3:
 		uploadArtifactsToS3(params)
 
-	case "docker_build":
+	case cmdDockerBuild:
 		dockerBuildComponents(params)
 
-	case "docker_tag":
+	case cmdDockerTag:
 		dockerTagComponents(params)
 
-	case "deploy":
+	case cmdDeploy:
+		deployComponents(params)
+
 	default:
 		panic("unrecognized command")
 	}

@@ -11,13 +11,21 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+const (
+	cmdTestAndBuild string = "test_and_build"
+	cmdUploadToS3   string = "upload_to_s3"
+	cmdDockerBuild  string = "docker_build"
+	cmdDockerTag    string = "docker_tag"
+	cmdDeploy       string = "deploy"
+)
+
 var (
 	validCommands = []string{
-		"test_and_build",
-		"upload_to_s3",
-		"docker_build",
-		"docker_tag",
-		"deploy"}
+		cmdTestAndBuild,
+		cmdUploadToS3,
+		cmdDockerBuild,
+		cmdDockerTag,
+		cmdDeploy}
 )
 
 func parseConfig(fileName string) Config {
@@ -40,6 +48,7 @@ func parseParams() Params {
 	var branch = flag.String("git-branch", "", "git branch [required] -> needs to be mapped to a ASG in the ci-aws-config.yml")
 	var commit = flag.String("git-commit", "", "git commit [required]")
 	var isPullRequest = flag.Bool("pr", false, "pull request [optional, default=false]")
+	var pem = flag.String("pem", "", "pem file [optional]")
 
 	flag.Parse()
 
@@ -60,5 +69,5 @@ func parseParams() Params {
 
 	var git = Git{Branch: *branch, Commit: *commit, IsPullRequest: *isPullRequest}
 	var config = parseConfig("ci-aws-config.yml")
-	return Params{Command: *command, Git: git, Config: config}
+	return Params{Command: *command, Pem: *pem, Git: git, Config: config}
 }

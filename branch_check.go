@@ -24,10 +24,10 @@ func (self BranchCheck) shouldExecuteDockerBuild() bool {
 	branchConfigs := &self.Params.Config.BranchConfig
 	for _, branchConfig := range *branchConfigs {
 		if self.Params.Git.Branch == branchConfig.Branch {
-			return branchConfig.BuildDocker
+			return branchConfig.DockerBuild
 		}
 	}
-	return self.Params.Config.Default_build_docker
+	return self.Params.Config.Default_docker_build
 }
 
 func (self BranchCheck) shouldExecuteDockerTag() bool {
@@ -48,4 +48,36 @@ func (self BranchCheck) getDockerTagValue() string {
 		}
 	}
 	return self.Params.Config.Default_docker_tag_value
+}
+
+func (self BranchCheck) shouldDeploy() bool {
+	branchConfigs := &self.Params.Config.BranchConfig
+	for _, branchConfig := range *branchConfigs {
+		if self.Params.Git.Branch == branchConfig.Branch {
+			return branchConfig.Deploy
+		}
+	}
+	return self.Params.Config.Default_deploy
+}
+
+func (self BranchCheck) getBackofficeUrl() string {
+	var retVal string
+	branchConfigs := &self.Params.Config.BranchConfig
+	for _, branchConfig := range *branchConfigs {
+		if self.Params.Git.Branch == branchConfig.Branch {
+			retVal = branchConfig.backofficeUrl
+		}
+	}
+	return retVal
+}
+
+func (self BranchCheck) getASG() string {
+	var retVal string
+	branchConfigs := &self.Params.Config.BranchConfig
+	for _, branchConfig := range *branchConfigs {
+		if self.Params.Git.Branch == branchConfig.Branch {
+			retVal = branchConfig.ASG
+		}
+	}
+	return retVal
 }

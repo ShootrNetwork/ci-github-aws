@@ -6,7 +6,7 @@ path_in_docker: '/ci'
 
 default_deploy: false
 default_test_and_build: true
-default_build_docker: false
+default_docker_build: false
 default_docker_tag: false
 default_docker_tag_value: ''
 default_upload_to_s3: false
@@ -16,43 +16,48 @@ branch_config:
     asg: 'asg-tst'
     deploy: true
     test_and_build: true
-    build_docker: true
+    docker_build: true
     docker_tag: true
     docker_tag_value: 'TST'
     upload_to_s3: true
+    backoffice_url: tst-backoffice.shootr.com
 
   - branch: 'master'
     asg: 'asg-pre'
     deploy: true
     test_and_build: false
-    build_docker: false
+    docker_build: false
     docker_tag: true
     docker_tag_value: 'PRE'
     upload_to_s3: false
+    backoffice_url: null
 
   - branch: 'pro-'
     asg: 'asg-pro'
     deploy: true
     test_and_build: false
-    build_docker: false
+    docker_build: false
     docker_tag: true
     docker_tag_value: 'PRO'
     upload_to_s3: false
+    backoffice_url: backoffice.shootr.com
 
   - branch: 'prohotfix-'
     asg: 'asg-pro'
     deploy: true
     test_and_build: true
-    build_docker: true
+    docker_build: true
     docker_tag: true
     docker_tag_value: 'PRO'
     upload_to_s3: true
+    backoffice_url: backoffice.shootr.com
 
   - branch: 'dev-'
     asg: 'asg-dev'
     deploy: false
     test_and_build: true
-    build_docker: false
+    docker_build: false
     docker_tag: true
     docker_tag_value: 'DEV'
     upload_to_s3: true
+    backoffice_url: null
