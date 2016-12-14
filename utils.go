@@ -31,18 +31,15 @@ func copyFile(src string, dst string) {
 }
 
 func doWithTimeout(timeout time.Duration, timeBetweenExecutions time.Duration, action func() error) (err error) {
-	quitTimer := time.NewTimer(timeout)
-	defer quitTimer.Stop()
+	expirationDate := time.Now().Add(timeout)
 	for {
-		if actErr := action(); actErr != nil {
-			err = actErr
+		if actionErr := action(); actionErr != nil {
+			err = actionErr
 			return
 		}
-		select {
-		case <-quitTimer.C:
-			err = fmt.Errorf("timed out after %v", timeout)
-			return
-		default:
+		if time.Now().After(expirationDate) {
+			return fmt.Errorf("timed out after %v", timeout)
+		} else {
 			time.Sleep(timeBetweenExecutions)
 		}
 	}
