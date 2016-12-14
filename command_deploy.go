@@ -38,8 +38,21 @@ func deployBackoffice(url string, pem string) {
 	log.Printf("deploying backoffice: %s", command)
 }
 
-func deployASG(asg string) {
-	instanceIds := getASGInstanceIds(asg)
+func deployASG(asgName string) {
+	asg := getASG(asgName)
+	instanceIds := getASGInstanceIdsFromGroup(asg)
 	log.Printf("ASG Instances: %v", instanceIds)
 
+	oldDesiredCapacity := asg.DesiredCapacity
+	newDesiredCapacity := *oldDesiredCapacity * int64(2)
+	log.Printf("Setting ASG desired capacity from %d to %d", oldDesiredCapacity, newDesiredCapacity)
+	setASGDesiredCapacity(asgName, newDesiredCapacity)
+
+	checkInstanceCount(asgName)
+}
+
+func checkInstanceCount(asgName string) {
+	doWithTimeout(10*time.Minute, 10*time.Second, func() error {
+		return elbCheckInstancesInService(asgName)
+	})
 }
