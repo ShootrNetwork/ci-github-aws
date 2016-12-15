@@ -52,19 +52,22 @@ func deployASG(asgName string) {
 	const timeBetweenExecutions = 10 * time.Second
 
 	log.Println("Checking for instance count in ASG to be ok")
-	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
 		return asgCheckInstanceCountIsDesired(asgName)
 	})
 
 	elbName := asg.LoadBalancerNames[0]
 	log.Println("Checking for instance count in ELB to be ok")
-	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
 		return elbCheckInstanceCountIsDesired(*elbName, int(newDesiredCapacity))
 	})
 
 	log.Println("Waiting for all ELB instances to be healthy")
-	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
 		return elbCheckInstancesInService(*elbName)
 	})
+
+	log.Printf("Removing original instances from ELB to drain connections: %v", instanceIds)
+	elbRemoveInstances(*elbName, instanceIds)
 
 }

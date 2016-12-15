@@ -23,7 +23,6 @@ func elbCheckInstancesInService(elbName string) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -46,4 +45,21 @@ func elbCheckInstanceCountIsDesired(elbName string, desired int) error {
 		return errors.New("Not ready yet")
 	}
 	return nil
+}
+
+func elbRemoveInstances(elbName string, instanceIds []*string) {
+	svc := elb.New(awsSession)
+
+	var elbInstances []*elb.Instance
+	for _, instanceId := range instanceIds {
+		elbInstance := &elb.Instance{
+			InstanceId: aws.String(*instanceId),
+		}
+		elbInstances = append(elbInstances, elbInstance)
+	}
+
+	svc.DeregisterInstancesFromLoadBalancer(&elb.DeregisterInstancesFromLoadBalancerInput{
+		LoadBalancerName: aws.String(elbName),
+		Instances:        elbInstances,
+	})
 }

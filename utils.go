@@ -30,7 +30,7 @@ func copyFile(src string, dst string) {
 	check(err)
 }
 
-func doWithTimeout(timeout time.Duration, timeBetweenExecutions time.Duration, action func() error) (err error) {
+func executeWithTimeout(timeout time.Duration, timeBetweenExecutions time.Duration, action func() error) (err error) {
 	expirationDate := time.Now().Add(timeout)
 	for {
 		if actionErr := action(); actionErr != nil {
