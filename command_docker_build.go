@@ -7,7 +7,7 @@ import (
 )
 
 func dockerBuildComponents(params Params) {
-	branchCheck := BranchCheck{Params: params}
+	branchCheck := BranchCheck{params.Config.CurrentConfig}
 
 	if branchCheck.shouldExecuteDockerBuild() {
 		start := time.Now()

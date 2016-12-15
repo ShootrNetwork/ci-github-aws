@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 
 	yaml "gopkg.in/yaml.v2"
@@ -44,11 +45,11 @@ func parseConfig(fileName string) Config {
 }
 
 func parseParams() Params {
-	var command = flag.String("c", "", "command [required] -> "+strings.Join(validCommands[:], ", "))
-	var branch = flag.String("git-branch", "", "git branch [required] -> needs to be mapped to a ASG in the ci-aws-config.yml")
-	var commit = flag.String("git-commit", "", "git commit [required]")
-	var isPullRequest = flag.Bool("pr", false, "pull request [optional, default=false]")
-	var pem = flag.String("pem", "", "pem file [optional]")
+	command := flag.String("c", "", "command [required] -> "+strings.Join(validCommands[:], ", "))
+	branch := flag.String("git-branch", "", "git branch [required] -> needs to be mapped to a ASG in the ci-aws-config.yml")
+	commit := flag.String("git-commit", "", "git commit [required]")
+	isPullRequest := flag.Bool("pr", false, "pull request [optional, default=false]")
+	pem := flag.String("pem", "", "pem file [optional]")
 
 	flag.Parse()
 
@@ -67,7 +68,37 @@ func parseParams() Params {
 		log.Fatal("Error: invalid command. To get help, use [--help | -h] option.\n\n")
 	}
 
-	var git = Git{Branch: *branch, Commit: *commit, IsPullRequest: *isPullRequest}
-	var config = parseConfig("ci-aws-config.yml")
+	git := Git{Branch: *branch, Commit: *commit, IsPullRequest: *isPullRequest}
+	config := parseConfig("ci-aws-config.yml")
+
+	setCurrentConfig(&config, *branch)
+
 	return Params{Command: *command, Pem: *pem, Git: git, Config: config}
+}
+
+func setCurrentConfig(config *Config, branch string) {
+	var current BranchConfig
+	found := false
+	for _, branchConfig := range config.AllConfigs {
+		if regexp.MustCompile(branchConfig.Branch).MatchString(branch) {
+			log.Printf("Found config matching: %s", branchConfig.Branch)
+			current = branchConfig
+			found = true
+			break
+		}
+	}
+	if !found {
+		log.Println("Config for branch not found, setting defaults!")
+		current = BranchConfig{
+			Deploy:         config.Default_deploy,
+			TestAndBuild:   config.Default_test_and_build,
+			DockerBuild:    config.Default_docker_build,
+			DockerTag:      config.Default_docker_tag,
+			DockerTagValue: config.Default_docker_tag_value,
+			UploadToS3:     config.Default_upload_to_s3,
+		}
+	}
+
+	config.CurrentConfig = current
+	config.AllConfigs = nil
 }

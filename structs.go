@@ -19,17 +19,20 @@ type Config struct {
 	Default_docker_tag_value string `yaml:"default_docker_tag_value"`
 	Default_upload_to_s3     bool   `yaml:"default_upload_to_s3"`
 
-	BranchConfig []struct {
-		Branch         string `yaml:"branch"`
-		ASG            string `yaml:"asg"`
-		Deploy         bool   `yaml:"deploy"`
-		TestAndBuild   bool   `yaml:"test_and_build"`
-		DockerBuild    bool   `yaml:"docker_build"`
-		DockerTag      bool   `yaml:"docker_tag"`
-		DockerTagValue string `yaml:"docker_tag_value"`
-		UploadToS3     bool   `yaml:"upload_to_s3"`
-		backofficeUrl  string `yaml:"backoffice_url"`
-	} `yaml:"branch_config"`
+	AllConfigs    []BranchConfig `yaml:"branch_config"`
+	CurrentConfig BranchConfig
+}
+
+type BranchConfig struct {
+	Branch         string `yaml:"branch"`
+	ASG            string `yaml:"asg"`
+	Deploy         bool   `yaml:"deploy"`
+	TestAndBuild   bool   `yaml:"test_and_build"`
+	DockerBuild    bool   `yaml:"docker_build"`
+	DockerTag      bool   `yaml:"docker_tag"`
+	DockerTagValue string `yaml:"docker_tag_value"`
+	UploadToS3     bool   `yaml:"upload_to_s3"`
+	backofficeUrl  string `yaml:"backoffice_url"`
 }
 
 type AWS struct {
@@ -44,5 +47,5 @@ type Git struct {
 }
 
 type BranchCheck struct {
-	Params Params
+	BranchConfig BranchConfig
 }

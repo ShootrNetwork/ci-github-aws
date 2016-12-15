@@ -10,7 +10,7 @@ import (
 
 func deployComponents(params Params) {
 
-	branchCheck := BranchCheck{Params: params}
+	branchCheck := BranchCheck{params.Config.CurrentConfig}
 
 	if branchCheck.shouldDeploy() {
 		start := time.Now()

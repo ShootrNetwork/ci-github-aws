@@ -12,7 +12,7 @@ default_docker_tag_value: ''
 default_upload_to_s3: false
 
 branch_config:
-  - branch: 'develop'
+  - branch: '^develop$'
     asg: 'asg-tst'
     deploy: true
     test_and_build: true
@@ -22,7 +22,7 @@ branch_config:
     upload_to_s3: true
     backoffice_url: tst-backoffice.shootr.com
 
-  - branch: 'master'
+  - branch: '^master$'
     asg: 'asg-pre'
     deploy: true
     test_and_build: false
@@ -32,7 +32,7 @@ branch_config:
     upload_to_s3: false
     backoffice_url: null
 
-  - branch: 'pro-'
+  - branch: '^pro-'
     asg: 'asg-pro'
     deploy: true
     test_and_build: false
@@ -42,7 +42,7 @@ branch_config:
     upload_to_s3: false
     backoffice_url: backoffice.shootr.com
 
-  - branch: 'prohotfix-'
+  - branch: '^prohotfix-'
     asg: 'asg-pro'
     deploy: true
     test_and_build: true
@@ -52,7 +52,7 @@ branch_config:
     upload_to_s3: true
     backoffice_url: backoffice.shootr.com
 
-  - branch: 'dev-'
+  - branch: '^dev-'
     asg: 'asg-dev'
     deploy: false
     test_and_build: true

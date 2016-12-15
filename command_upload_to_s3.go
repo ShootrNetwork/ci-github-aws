@@ -10,7 +10,7 @@ import (
 
 func uploadArtifactsToS3(params Params) {
 
-	branchCheck := BranchCheck{Params: params}
+	branchCheck := BranchCheck{params.Config.CurrentConfig}
 
 	if branchCheck.shouldExecuteUploadToS3() {
 		start := time.Now()

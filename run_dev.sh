@@ -12,6 +12,6 @@ go install && \
 ci-github-aws \
   --c upload_to_s3 \
  --git-commit a1234b567 \
- --git-branch develops
+ --git-branch 'dev-'
 
 # --c test_and_build \

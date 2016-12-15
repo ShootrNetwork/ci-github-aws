@@ -7,7 +7,7 @@ import (
 )
 
 func testAndBuild(params Params) {
-	branchCheck := BranchCheck{Params: params}
+	branchCheck := BranchCheck{params.Config.CurrentConfig}
 
 	if branchCheck.shouldExecuteTestAndBuild() {
 		start := time.Now()

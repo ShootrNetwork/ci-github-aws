@@ -8,7 +8,7 @@ import (
 )
 
 func dockerTagComponents(params Params) {
-	branchCheck := BranchCheck{Params: params}
+	branchCheck := BranchCheck{params.Config.CurrentConfig}
 
 	if branchCheck.shouldExecuteDockerTag() {
 		start := time.Now()
