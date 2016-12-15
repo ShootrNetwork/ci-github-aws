@@ -48,11 +48,23 @@ func deployASG(asgName string) {
 	log.Printf("Setting ASG desired capacity from %d to %d", oldDesiredCapacity, newDesiredCapacity)
 	setASGDesiredCapacity(asgName, newDesiredCapacity)
 
-	checkInstanceCount(asgName)
-}
+	const timeout = 10 * time.Minute
+	const timeBetweenExecutions = 10 * time.Second
 
-func checkInstanceCount(asgName string) {
-	doWithTimeout(10*time.Minute, 10*time.Second, func() error {
-		return elbCheckInstancesInService(asgName)
+	log.Println("Checking for instance count in ASG to be ok")
+	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return asgCheckInstanceCountIsDesired(asgName)
 	})
+
+	elbName := asg.LoadBalancerNames[0]
+	log.Println("Checking for instance count in ELB to be ok")
+	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return elbCheckInstanceCountIsDesired(*elbName, int(newDesiredCapacity))
+	})
+
+	log.Println("Waiting for all ELB instances to be healthy")
+	doWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return elbCheckInstancesInService(*elbName)
+	})
+
 }

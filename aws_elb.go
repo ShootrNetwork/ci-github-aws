@@ -19,10 +19,31 @@ func elbCheckInstancesInService(elbName string) error {
 		for _, state := range response.InstanceStates {
 			if *state.State != "InService" {
 				log.Printf("instance %s -> %s", *state.InstanceId, *state.State)
-				return errors.New("not ready yet")
+				return errors.New("Not ready yet")
 			}
 		}
 	}
 
 	return err
+}
+
+func getElb(elbName string) *elb.LoadBalancerDescription {
+	svc := elb.New(awsSession)
+
+	response, err := svc.DescribeLoadBalancers(&elb.DescribeLoadBalancersInput{
+		LoadBalancerNames: []*string{aws.String(elbName)},
+	})
+	check(err)
+
+	return response.LoadBalancerDescriptions[0]
+}
+
+func elbCheckInstanceCountIsDesired(elbName string, desired int) error {
+	elb := getElb(elbName)
+	currentCount := len(elb.Instances)
+	if currentCount != desired {
+		log.Printf("ELB Instances/desired -> (%d/%d), ids: %v", currentCount, desired, elb.Instances)
+		return errors.New("Not ready yet")
+	}
+	return nil
 }

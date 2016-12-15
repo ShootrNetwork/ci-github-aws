@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 )
@@ -38,4 +41,15 @@ func setASGDesiredCapacity(asgName string, newDesiredCapacity int64) {
 		DesiredCapacity:      aws.Int64(newDesiredCapacity),
 	})
 	check(err)
+}
+
+func asgCheckInstanceCountIsDesired(asgName string) error {
+	asg := getASG(asgName)
+	ids := getASGInstanceIdsFromGroup(asg)
+
+	if *asg.DesiredCapacity != int64(len(ids)) {
+		log.Printf("ASG Instances/desired -> (%d/%d), ids: %v", len(ids), asg.DesiredCapacity, ids)
+		return errors.New("Not ready yet")
+	}
+	return nil
 }
