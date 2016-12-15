@@ -1,4 +1,4 @@
-package main
+package aws
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 )
 
-func getASG(asgName string) *autoscaling.Group {
+func GetASG(asgName string) *autoscaling.Group {
 	svc := autoscaling.New(awsSession)
 
 	resp, err := svc.DescribeAutoScalingGroups(&autoscaling.DescribeAutoScalingGroupsInput{
@@ -20,12 +20,12 @@ func getASG(asgName string) *autoscaling.Group {
 	return resp.AutoScalingGroups[0]
 }
 
-func getASGInstanceIds(asgName string) []*string {
-	asg := getASG(asgName)
-	return getASGInstanceIdsFromGroup(asg)
+func GetASGInstanceIds(asgName string) []*string {
+	asg := GetASG(asgName)
+	return GetASGInstanceIdsFromGroup(asg)
 }
 
-func getASGInstanceIdsFromGroup(group *autoscaling.Group) []*string {
+func GetASGInstanceIdsFromGroup(group *autoscaling.Group) []*string {
 	instances := group.Instances
 	ids := make([]*string, len(instances))
 	for i, instance := range instances {
@@ -34,7 +34,7 @@ func getASGInstanceIdsFromGroup(group *autoscaling.Group) []*string {
 	return ids
 }
 
-func setASGDesiredCapacity(asgName string, newDesiredCapacity int64) {
+func SetASGDesiredCapacity(asgName string, newDesiredCapacity int64) {
 	svc := autoscaling.New(awsSession)
 	_, err := svc.SetDesiredCapacity(&autoscaling.SetDesiredCapacityInput{
 		AutoScalingGroupName: aws.String(asgName),
@@ -43,9 +43,9 @@ func setASGDesiredCapacity(asgName string, newDesiredCapacity int64) {
 	check(err)
 }
 
-func asgCheckInstanceCountIsDesired(asgName string) error {
-	asg := getASG(asgName)
-	ids := getASGInstanceIdsFromGroup(asg)
+func AsgCheckInstanceCountIsDesired(asgName string) error {
+	asg := GetASG(asgName)
+	ids := GetASGInstanceIdsFromGroup(asg)
 
 	if *asg.DesiredCapacity != int64(len(ids)) {
 		log.Printf("ASG Instances/desired -> (%d/%d), ids: %v", len(ids), asg.DesiredCapacity, ids)

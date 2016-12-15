@@ -1,4 +1,4 @@
-package main
+package aws
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func listBuckets() {
+func ListBuckets() {
 	s3Client := s3.New(awsSession)
 
 	var params *s3.ListBucketsInput
@@ -22,7 +22,7 @@ func listBuckets() {
 	log.Println(result)
 }
 
-func uploadToS3(bucket string, source string, destination string) {
+func UploadToS3(bucket string, source string, destination string) {
 
 	file, err := os.Open(source)
 	if err != nil {

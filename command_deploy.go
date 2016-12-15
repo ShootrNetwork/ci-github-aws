@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	awsShootr "github.com/shootrnetwork/ci-github-aws/aws"
 )
 
 func deployComponents(params Params) {
@@ -21,6 +23,7 @@ func deployComponents(params Params) {
 
 		asg := branchCheck.getASG()
 		if asg != "" {
+			awsShootr.InitAWSSession(params.Config.AWS.Region)
 			deployASG(asg)
 		}
 
@@ -39,43 +42,43 @@ func deployBackoffice(url string, pem string) {
 }
 
 func deployASG(asgName string) {
-	asg := getASG(asgName)
-	instanceIds := getASGInstanceIdsFromGroup(asg)
+	asg := awsShootr.GetASG(asgName)
+	instanceIds := awsShootr.GetASGInstanceIdsFromGroup(asg)
 	log.Printf("ASG Instances: %v", instanceIds)
 
 	oldDesiredCapacity := asg.DesiredCapacity
 	newDesiredCapacity := *oldDesiredCapacity * int64(2)
 	log.Printf("Setting ASG desired capacity from %d to %d", oldDesiredCapacity, newDesiredCapacity)
-	setASGDesiredCapacity(asgName, newDesiredCapacity)
+	awsShootr.SetASGDesiredCapacity(asgName, newDesiredCapacity)
 
 	const timeout = 10 * time.Minute
 	const timeBetweenExecutions = 10 * time.Second
 
 	log.Println("Checking for instance count in ASG to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return asgCheckInstanceCountIsDesired(asgName)
+		return awsShootr.AsgCheckInstanceCountIsDesired(asgName)
 	})
 
 	elbName := asg.LoadBalancerNames[0]
 	log.Println("Checking for instance count in ELB to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return elbCheckInstanceCountIsDesired(*elbName, int(newDesiredCapacity))
+		return awsShootr.ElbCheckInstanceCountIsDesired(*elbName, int(newDesiredCapacity))
 	})
 
 	log.Println("Waiting for all ELB instances to be healthy")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return elbCheckInstancesInService(*elbName)
+		return awsShootr.ElbCheckInstancesInService(*elbName)
 	})
 
 	log.Printf("Removing original instances from ELB to drain connections: %v", instanceIds)
-	elbRemoveInstances(*elbName, instanceIds)
+	awsShootr.ElbRemoveInstances(*elbName, instanceIds)
 	time.Sleep(10 * time.Second)
 
 	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
-	setASGDesiredCapacity(asgName, *oldDesiredCapacity)
+	awsShootr.SetASGDesiredCapacity(asgName, *oldDesiredCapacity)
 
 	log.Println("Checking for instance count in ASG to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return asgCheckInstanceCountIsDesired(asgName)
+		return awsShootr.AsgCheckInstanceCountIsDesired(asgName)
 	})
 }

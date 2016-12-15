@@ -1,4 +1,4 @@
-package main
+package aws
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,4 +17,10 @@ func InitAWSSession(region string) {
 
 	awsSession.Config.Region = aws.String(region)
 	awsSession.Config.WithMaxRetries(aws.UseServiceDefaultRetries)
+}
+
+func check(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
 }

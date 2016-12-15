@@ -1,4 +1,4 @@
-package main
+package aws
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/elb"
 )
 
-func elbCheckInstancesInService(elbName string) error {
+func ElbCheckInstancesInService(elbName string) error {
 	svc := elb.New(awsSession)
 
 	response, err := svc.DescribeInstanceHealth(&elb.DescribeInstanceHealthInput{
@@ -26,7 +26,7 @@ func elbCheckInstancesInService(elbName string) error {
 	return err
 }
 
-func getElb(elbName string) *elb.LoadBalancerDescription {
+func GetElb(elbName string) *elb.LoadBalancerDescription {
 	svc := elb.New(awsSession)
 
 	response, err := svc.DescribeLoadBalancers(&elb.DescribeLoadBalancersInput{
@@ -37,8 +37,8 @@ func getElb(elbName string) *elb.LoadBalancerDescription {
 	return response.LoadBalancerDescriptions[0]
 }
 
-func elbCheckInstanceCountIsDesired(elbName string, desired int) error {
-	elb := getElb(elbName)
+func ElbCheckInstanceCountIsDesired(elbName string, desired int) error {
+	elb := GetElb(elbName)
 	currentCount := len(elb.Instances)
 	if currentCount != desired {
 		log.Printf("ELB Instances/desired -> (%d/%d), ids: %v", currentCount, desired, elb.Instances)
@@ -47,7 +47,7 @@ func elbCheckInstanceCountIsDesired(elbName string, desired int) error {
 	return nil
 }
 
-func elbRemoveInstances(elbName string, instanceIds []*string) {
+func ElbRemoveInstances(elbName string, instanceIds []*string) {
 	svc := elb.New(awsSession)
 
 	var elbInstances []*elb.Instance
