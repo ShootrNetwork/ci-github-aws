@@ -69,5 +69,13 @@ func deployASG(asgName string) {
 
 	log.Printf("Removing original instances from ELB to drain connections: %v", instanceIds)
 	elbRemoveInstances(*elbName, instanceIds)
+	time.Sleep(10 * time.Second)
 
+	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
+	setASGDesiredCapacity(asgName, *oldDesiredCapacity)
+
+	log.Println("Checking for instance count in ASG to be ok")
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return asgCheckInstanceCountIsDesired(asgName)
+	})
 }
