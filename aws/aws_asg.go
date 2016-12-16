@@ -11,11 +11,17 @@ import (
 func GetASG(asgName string) *autoscaling.Group {
 	svc := autoscaling.New(awsSession)
 
+	log.Printf("Request to get Asg with name: %s", asgName)
+
 	resp, err := svc.DescribeAutoScalingGroups(&autoscaling.DescribeAutoScalingGroupsInput{
 		AutoScalingGroupNames: []*string{
 			aws.String(asgName)},
 	})
 	check(err)
+
+	if len(resp.AutoScalingGroups) < 1 {
+		log.Fatalf("ASG '%s' not found!", asgName)
+	}
 
 	return resp.AutoScalingGroups[0]
 }
@@ -36,19 +42,21 @@ func GetASGInstanceIdsFromGroup(group *autoscaling.Group) []*string {
 
 func SetASGDesiredCapacity(asgName string, newDesiredCapacity int64) {
 	svc := autoscaling.New(awsSession)
-	_, err := svc.SetDesiredCapacity(&autoscaling.SetDesiredCapacityInput{
+	resp, err := svc.SetDesiredCapacity(&autoscaling.SetDesiredCapacityInput{
 		AutoScalingGroupName: aws.String(asgName),
 		DesiredCapacity:      aws.Int64(newDesiredCapacity),
 	})
 	check(err)
+	log.Printf("asg SetDesiredCapacity response: %v", resp)
 }
 
 func AsgCheckInstanceCountIsDesired(asgName string) error {
 	asg := GetASG(asgName)
 	ids := GetASGInstanceIdsFromGroup(asg)
+	desired := int(*asg.DesiredCapacity)
 
-	if *asg.DesiredCapacity != int64(len(ids)) {
-		log.Printf("ASG Instances/desired -> (%d/%d), ids: %v", len(ids), asg.DesiredCapacity, ids)
+	if desired != len(ids) {
+		log.Printf("ASG Instances/desired -> (%d/%d), ids: %v", len(ids), desired, ids)
 		return errors.New("Not ready yet")
 	}
 	return nil
