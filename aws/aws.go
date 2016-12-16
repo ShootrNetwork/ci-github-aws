@@ -1,6 +1,8 @@
 package aws
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -17,6 +19,8 @@ func InitAWSSession(region string) {
 
 	awsSession.Config.Region = aws.String(region)
 	awsSession.Config.WithMaxRetries(aws.UseServiceDefaultRetries)
+
+	log.Println("AWS session started")
 }
 
 func check(err error) {

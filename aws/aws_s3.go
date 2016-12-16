@@ -41,7 +41,7 @@ func UploadToS3(bucket string, source string, destination string) {
 		Body:   bytes.NewReader(byteArray),
 	})
 
-	log.Printf("Uploading file to %s%s", bucket, destination)
+	log.Printf("Uploading file to %s/%s", bucket, destination)
 
 	if err != nil {
 		log.Fatal("Failed to upload to s3: ", err)
