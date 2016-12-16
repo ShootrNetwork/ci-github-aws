@@ -44,12 +44,16 @@ func deployBackoffice(url string, pem string) {
 func deployASG(asgName string) {
 	asg := awsShootr.GetASG(asgName)
 	instanceIds := awsShootr.GetASGInstanceIdsFromGroup(asg)
-	log.Printf("ASG Instances: %v", instanceIds)
+	log.Printf("ASG Instances: %+v", &instanceIds)
 
-	oldDesiredCapacity := asg.DesiredCapacity
-	newDesiredCapacity := *oldDesiredCapacity * int64(2)
+	oldDesiredCapacity := int(*asg.DesiredCapacity)
+	if oldDesiredCapacity < 1 {
+		log.Fatalf("ASG %s has no instances!!!", asgName)
+	}
+
+	newDesiredCapacity := oldDesiredCapacity * 2
 	log.Printf("Setting ASG desired capacity from %d to %d", oldDesiredCapacity, newDesiredCapacity)
-	awsShootr.SetASGDesiredCapacity(asgName, newDesiredCapacity)
+	awsShootr.SetASGDesiredCapacity(asgName, int64(newDesiredCapacity))
 
 	const timeout = 10 * time.Minute
 	const timeBetweenExecutions = 10 * time.Second
@@ -75,7 +79,7 @@ func deployASG(asgName string) {
 	time.Sleep(10 * time.Second)
 
 	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
-	awsShootr.SetASGDesiredCapacity(asgName, *oldDesiredCapacity)
+	awsShootr.SetASGDesiredCapacity(asgName, int64(oldDesiredCapacity))
 
 	log.Println("Checking for instance count in ASG to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
