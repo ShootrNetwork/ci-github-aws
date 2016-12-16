@@ -35,10 +35,11 @@ func executeWithTimeout(timeout time.Duration, timeBetweenExecutions time.Durati
 	for {
 		if actionErr := action(); actionErr != nil {
 			err = actionErr
+		} else {
 			return
 		}
 		if time.Now().After(expirationDate) {
-			return fmt.Errorf("timed out after %v", timeout)
+			return fmt.Errorf("timed out after %v. Last error: %v", timeout, err)
 		} else {
 			time.Sleep(timeBetweenExecutions)
 		}
