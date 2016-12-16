@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 	"sync"
@@ -15,7 +14,7 @@ func exe_cmd_wait(command string, timeout time.Duration) {
 	go exe_cmd(command, wg)
 
 	if waitTimeout(wg, timeout) {
-		fmt.Println("Command timed out")
+		log.Fatalf("Command timed out: %s", command)
 	}
 }
 
