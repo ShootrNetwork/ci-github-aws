@@ -13,7 +13,7 @@ default_upload_to_s3: false
 
 branch_config:
   - branch: '^develop$'
-    asg: 'asg-tst'
+    asg: asg-shootr-api-tst
     deploy: true
     test_and_build: true
     docker_build: true
@@ -23,7 +23,7 @@ branch_config:
     backoffice_url: tst-backoffice.shootr.com
 
   - branch: '^master$'
-    asg: 'asg-pre'
+    asg: asg-shootr-api-pre
     deploy: true
     test_and_build: false
     docker_build: false
@@ -33,7 +33,7 @@ branch_config:
     backoffice_url: null
 
   - branch: '^pro-'
-    asg: 'asg-pro'
+    asg: asg-shootr-api-pro
     deploy: true
     test_and_build: false
     docker_build: false
@@ -43,7 +43,7 @@ branch_config:
     backoffice_url: backoffice.shootr.com
 
   - branch: '^prohotfix-'
-    asg: 'asg-pro'
+    asg: asg-shootr-api-pro
     deploy: true
     test_and_build: true
     docker_build: true
@@ -53,10 +53,10 @@ branch_config:
     backoffice_url: backoffice.shootr.com
 
   - branch: '^dev-'
-    asg: 'asg-dev'
-    deploy: false
+    asg: asg-shootr-api-dev
+    deploy: true
     test_and_build: true
-    docker_build: false
+    docker_build: true
     docker_tag: true
     docker_tag_value: 'DEV'
     upload_to_s3: true
