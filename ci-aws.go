@@ -9,6 +9,7 @@ var components = []string{
 }
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("Starting...")
 
 	params := parseParams()
