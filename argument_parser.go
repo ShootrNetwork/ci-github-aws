@@ -71,12 +71,12 @@ func parseParams() Params {
 	git := Git{Branch: *branch, Commit: *commit, IsPullRequest: *isPullRequest}
 	config := parseConfig("ci-aws-config.yml")
 
-	setCurrentConfig(&config, *branch)
+	setCurrentConfig(&config, &git, *branch)
 
 	return Params{Command: *command, Pem: *pem, Git: git, Config: config}
 }
 
-func setCurrentConfig(config *Config, branch string) {
+func setCurrentConfig(config *Config, git *Git, branch string) {
 	var current BranchConfig
 	found := false
 	for _, branchConfig := range config.AllConfigs {
@@ -101,4 +101,5 @@ func setCurrentConfig(config *Config, branch string) {
 
 	config.CurrentConfig = current
 	config.AllConfigs = nil
+	config.CurrentConfig.IsPullRequest = git.IsPullRequest
 }

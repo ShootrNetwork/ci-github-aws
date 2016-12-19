@@ -32,7 +32,8 @@ type BranchConfig struct {
 	DockerTag      bool   `yaml:"docker_tag"`
 	DockerTagValue string `yaml:"docker_tag_value"`
 	UploadToS3     bool   `yaml:"upload_to_s3"`
-	backofficeUrl  string `yaml:"backoffice_url"`
+	BackofficeUrl  string `yaml:"backoffice_url"`
+	IsPullRequest  bool
 }
 
 type AWS struct {
