@@ -81,14 +81,14 @@ func setCurrentConfig(config *Config, git *Git, branch string) {
 	found := false
 	for _, branchConfig := range config.AllConfigs {
 		if regexp.MustCompile(branchConfig.Branch).MatchString(branch) {
-			log.Printf("Found config matching: %s", branchConfig.Branch)
+			log.Printf("Found config matching for branch '%s': %s", branch, branchConfig.Branch)
 			current = branchConfig
 			found = true
 			break
 		}
 	}
 	if !found {
-		log.Println("Config for branch not found, setting defaults!")
+		log.Printf("Config for branch '%s' not found, using default settings!", branch)
 		current = BranchConfig{
 			Deploy:         config.Default_deploy,
 			TestAndBuild:   config.Default_test_and_build,
