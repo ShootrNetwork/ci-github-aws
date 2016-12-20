@@ -43,4 +43,5 @@ func pullTagAndPush(component string, commit string, tagValue string) {
 	dockerPull(commitImage)
 	dockerTag(commitImage, tagImage)
 	dockerPush(tagImage)
+	log.Printf("pull and tag for %s:%s done!", component, tagValue)
 }

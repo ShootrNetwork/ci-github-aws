@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -56,8 +55,8 @@ func parseParams() Params {
 	flag.Parse()
 
 	flag.Usage = func() {
-		fmt.Printf("usage: ci-aws -c <command> -git-branch <git-branch> [-pr 'false']\n\n")
-		fmt.Println("Valid commands: ", validCommands)
+		log.Printf("usage: ci-aws -c <command> -git-branch <git-branch> [-pr 'false']\n\n")
+		log.Println("Valid commands: ", validCommands)
 		flag.PrintDefaults()
 	}
 
