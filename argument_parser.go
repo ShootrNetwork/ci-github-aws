@@ -18,6 +18,7 @@ const (
 	cmdDockerBuild  string = "docker_build"
 	cmdDockerTag    string = "docker_tag"
 	cmdDeploy       string = "deploy"
+	cmdRunAll       string = "run_all"
 )
 
 var (
@@ -26,7 +27,8 @@ var (
 		cmdUploadToS3,
 		cmdDockerBuild,
 		cmdDockerTag,
-		cmdDeploy}
+		cmdDeploy,
+		cmdRunAll}
 )
 
 func parseConfig(fileName string) Config {

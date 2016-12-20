@@ -32,6 +32,13 @@ func main() {
 	case cmdDeploy:
 		deployComponents(params)
 
+	case cmdRunAll:
+		testAndBuild(params)
+		uploadArtifactsToS3(params)
+		dockerBuildComponents(params)
+		dockerTagComponents(params)
+		deployComponents(params)
+
 	default:
 		panic("unrecognized command")
 	}
