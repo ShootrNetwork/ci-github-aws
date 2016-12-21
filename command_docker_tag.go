@@ -17,14 +17,11 @@ func dockerTagComponents(params Params) {
 		commit := params.Git.Commit
 		tagValue := branchCheck.getDockerTagValue()
 
-		wg := new(sync.WaitGroup)
+		var wg sync.WaitGroup
 
 		for _, component := range components {
-			go func(component string, commit string, tagValue string) {
-				wg.Add(1)
-				pullTagAndPush(component, commit, tagValue)
-				wg.Done()
-			}(component, commit, tagValue)
+			wg.Add(1)
+			go pullTagAndPushAsync(component, commit, tagValue, &wg)
 		}
 
 		wg.Wait()
@@ -34,6 +31,11 @@ func dockerTagComponents(params Params) {
 	} else {
 		log.Println("Skipping Docker tag")
 	}
+}
+
+func pullTagAndPushAsync(component string, commit string, tagValue string, wg *sync.WaitGroup) {
+	pullTagAndPush(component, commit, tagValue)
+	wg.Done()
 }
 
 func pullTagAndPush(component string, commit string, tagValue string) {
