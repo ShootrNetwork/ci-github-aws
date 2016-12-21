@@ -49,7 +49,7 @@ func parseParams() Params {
 	command := flag.String("c", "", "command [required] -> "+strings.Join(validCommands[:], ", "))
 	branch := flag.String("git-branch", "", "git branch [required] -> needs to be mapped to a ASG in the ci-aws-config.yml")
 	commit := flag.String("git-commit", "", "git commit [required]")
-	isPullRequest := flag.Bool("pr", false, "pull request [optional, default=false]")
+	isPullRequestStr := flag.String("pr", "false", "pull request [optional, default=false]")
 	pem := flag.String("pem", "", "pem file [optional]")
 
 	flag.Parse()
@@ -69,7 +69,13 @@ func parseParams() Params {
 		log.Fatal("Error: invalid command. To get help, use [--help | -h] option.\n\n")
 	}
 
-	git := Git{Branch: *branch, Commit: *commit, IsPullRequest: *isPullRequest}
+	var isPullRequest bool
+	if *isPullRequestStr != "false" {
+		log.Printf("Detected Pull Request: %s", *isPullRequestStr)
+		isPullRequest = true
+	}
+
+	git := Git{Branch: *branch, Commit: *commit, IsPullRequest: isPullRequest}
 	config := parseConfig("ci-aws-config.yml")
 
 	setCurrentConfig(&config, &git, *branch)
