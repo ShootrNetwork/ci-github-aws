@@ -10,7 +10,8 @@ type Params struct {
 type Config struct {
 	AWS AWS `yaml:"aws"`
 
-	PathInDocker string `yaml:"path_in_docker"`
+	PathInDocker         string `yaml:"path_in_docker"`
+	DockerBuildImageName string `yaml:"docker_build_image_name"`
 
 	Default_deploy           bool   `yaml:"default_deploy"`
 	Default_test_and_build   bool   `yaml:"default_test_and_build"`

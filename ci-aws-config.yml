@@ -3,6 +3,7 @@ aws:
   artifact_bucket: 'shootr-releases'
 
 path_in_docker: '/ci'
+docker_build_image_name: java8-ci-slim
 
 default_deploy: false
 default_test_and_build: true
