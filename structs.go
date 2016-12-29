@@ -19,6 +19,7 @@ type Config struct {
 	Default_docker_tag       bool   `yaml:"default_docker_tag"`
 	Default_docker_tag_value string `yaml:"default_docker_tag_value"`
 	Default_upload_to_s3     bool   `yaml:"default_upload_to_s3"`
+	Default_deploy_type      string `yaml:"default_deploy_type"`
 
 	AllConfigs    []BranchConfig `yaml:"branch_config"`
 	CurrentConfig BranchConfig
@@ -28,6 +29,7 @@ type BranchConfig struct {
 	Branch         string `yaml:"branch"`
 	ASG            string `yaml:"asg"`
 	Deploy         bool   `yaml:"deploy"`
+	DeployType     string `yaml:"deploy_type"`
 	TestAndBuild   bool   `yaml:"test_and_build"`
 	DockerBuild    bool   `yaml:"docker_build"`
 	DockerTag      bool   `yaml:"docker_tag"`

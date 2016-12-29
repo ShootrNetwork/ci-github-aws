@@ -11,11 +11,13 @@ default_docker_build: false
 default_docker_tag: false
 default_docker_tag_value: ''
 default_upload_to_s3: false
+default_deploy_type: elb
 
 branch_config:
   - branch: '^develop$'
     asg: asg-shootr-api-tst
     deploy: true
+    deploy_type: elb
     test_and_build: true
     docker_build: true
     docker_tag: true
@@ -26,6 +28,7 @@ branch_config:
   - branch: '^master$'
     asg: asg-shootr-api-pre
     deploy: true
+    deploy_type: elb
     test_and_build: false
     docker_build: false
     docker_tag: true
@@ -36,6 +39,7 @@ branch_config:
   - branch: '^pro-'
     asg: asg-shootr-api-pro
     deploy: true
+    deploy_type: elb
     test_and_build: false
     docker_build: false
     docker_tag: true
@@ -46,6 +50,7 @@ branch_config:
   - branch: '^prohotfix-'
     asg: asg-shootr-api-pro
     deploy: true
+    deploy_type: elb
     test_and_build: true
     docker_build: true
     docker_tag: true
@@ -55,6 +60,7 @@ branch_config:
 
   - branch: '^dev-'
     asg: asg-shootr-api-dev
+    deploy_type: targetGroup
     deploy: true
     test_and_build: true
     docker_build: true

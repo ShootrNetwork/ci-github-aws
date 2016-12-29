@@ -31,3 +31,7 @@ func (self BranchCheck) getBackofficeUrl() string {
 func (self BranchCheck) getASG() string {
 	return self.BranchConfig.ASG
 }
+
+func (self BranchCheck) getDeployType() string {
+	return self.BranchConfig.DeployType
+}

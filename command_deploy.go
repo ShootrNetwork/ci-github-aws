@@ -5,8 +5,12 @@ import (
 	"log"
 	"time"
 
+	"github.com/aws/aws-sdk-go/service/autoscaling"
 	awsShootr "github.com/shootrnetwork/ci-github-aws/aws"
 )
+
+const timeout = 10 * time.Minute
+const timeBetweenExecutions = 10 * time.Second
 
 func deployComponents(params Params) {
 
@@ -24,7 +28,7 @@ func deployComponents(params Params) {
 		asg := branchCheck.getASG()
 		if asg != "" {
 			awsShootr.InitAWSSession(params.Config.AWS.Region)
-			deployASG(asg)
+			deployASG(asg, branchCheck.getDeployType())
 		}
 
 		log.Printf("Deploy done in %s", time.Since(start))
@@ -41,7 +45,7 @@ func deployBackoffice(url string, pem string) {
 	log.Printf("deploying backoffice: %s", command)
 }
 
-func deployASG(asgName string) {
+func deployASG(asgName string, deployType string) {
 	asg := awsShootr.GetASG(asgName)
 	instanceIds := awsShootr.GetASGInstanceIdsFromGroup(asg)
 	log.Printf("ASG Instances: %+v", &instanceIds)
@@ -55,14 +59,27 @@ func deployASG(asgName string) {
 	log.Printf("Setting ASG desired capacity from %d to %d", oldDesiredCapacity, newDesiredCapacity)
 	awsShootr.SetASGDesiredCapacity(asgName, int64(newDesiredCapacity))
 
-	const timeout = 10 * time.Minute
-	const timeBetweenExecutions = 10 * time.Second
-
 	log.Println("Checking for instance count in ASG to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
 		return awsShootr.AsgCheckInstanceCountIsDesired(asgName)
 	})
 
+	if deployType == "elb" {
+		doElbChecks(asg, newDesiredCapacity, instanceIds)
+	} else if deployType == "targetGroup" {
+		doTargetGroupChecks(asg, newDesiredCapacity, instanceIds)
+	}
+
+	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
+	awsShootr.SetASGDesiredCapacity(asgName, int64(oldDesiredCapacity))
+
+	log.Println("Checking for instance count in ASG to be ok")
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return awsShootr.AsgCheckInstanceCountIsDesired(asgName)
+	})
+}
+
+func doElbChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*string) {
 	elbName := asg.LoadBalancerNames[0]
 	log.Println("Checking for instance count in ELB to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
@@ -77,12 +94,7 @@ func deployASG(asgName string) {
 	log.Printf("Removing original instances from ELB to drain connections: %v", instanceIds)
 	awsShootr.ElbRemoveInstances(*elbName, instanceIds)
 	time.Sleep(10 * time.Second)
+}
 
-	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
-	awsShootr.SetASGDesiredCapacity(asgName, int64(oldDesiredCapacity))
-
-	log.Println("Checking for instance count in ASG to be ok")
-	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return awsShootr.AsgCheckInstanceCountIsDesired(asgName)
-	})
+func doTargetGroupChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*string) {
 }
