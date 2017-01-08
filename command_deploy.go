@@ -97,4 +97,18 @@ func doElbChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*
 }
 
 func doTargetGroupChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*string) {
+	targetGroupArn := asg.TargetGroupARNs[0]
+	log.Println("Checking for instance count in TargetGroup to be ok")
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return awsShootr.TargetGroupCheckInstanceCountIsDesired(*targetGroupArn, int(newDesiredCapacity))
+	})
+
+	log.Println("Waiting for all Target Group instances to be healthy")
+	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
+		return awsShootr.AlbCheckInstancesInService(*targetGroupArn)
+	})
+
+	log.Printf("Removing original instances from ALB to drain connections: %v", instanceIds)
+	awsShootr.AlbRemoveInstances(*targetGroupArn, instanceIds)
+	time.Sleep(10 * time.Second)
 }
