@@ -34,7 +34,7 @@ func AlbCheckInstancesInService(targetGroupArn string) error {
 
 	if err == nil {
 		for _, targetHealthDescription := range resp.TargetHealthDescriptions {
-			if *targetHealthDescription.TargetHealth.State != "InService" {
+			if *targetHealthDescription.TargetHealth.State != "healthy" {
 				log.Printf("instance %s -> %s", *targetHealthDescription.Target.Id, *targetHealthDescription.TargetHealth.State)
 				return errors.New("Not ready yet")
 			}
