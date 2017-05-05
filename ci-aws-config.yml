@@ -4,6 +4,7 @@ aws:
 
 path_in_docker: '/ci'
 docker_build_image_name: java8-ci-slim
+mvn_build_args: 'jacoco:report coveralls:report'
 
 default_deploy: false
 default_test_and_build: true

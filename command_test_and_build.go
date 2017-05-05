@@ -14,7 +14,9 @@ func testAndBuild(params Params) {
 		log.Println("Test and build start...")
 
 		path := params.Config.PathInDocker
-		command := fmt.Sprintf("docker exec %s bash -c \"cd %s && ./mvnw --quiet --batch-mode clean test install jacoco:report coveralls:report -Dmaven.javadoc.skip=true\"", params.Config.DockerBuildImageName, path)
+		mvnArgs := params.Config.MvnBuildArgs
+
+		command := fmt.Sprintf("docker exec %s bash -c \"cd %s && ./mvnw --quiet --batch-mode clean test install %s -Dmaven.javadoc.skip=true\"", params.Config.DockerBuildImageName, path, mvnArgs)
 		//command := fmt.Sprintf("docker exec java8-ci mvn --quiet --batch-mode -f %s/pom.xml clean", params.Config.PathInDocker)
 		//command := fmt.Sprintf("docker exec java8-ci mvn -f %s/pom.xml clean test install", params.Config.PathInDocker)
 		exe_cmd_wait(command, 15*time.Minute)
