@@ -12,11 +12,12 @@ go install
 
 cd /Users/arturo/git/shootr-backend
 
-ci-github-aws --c test_and_build  --git-commit a1234b567 --git-branch 'random'
+#ci-github-aws --c test_and_build  --git-commit a1234b567 --git-branch 'random'
 #ci-github-aws --c upload_to_s3    --git-commit a1234b567 --git-branch 'dev-'
 #ci-github-aws --c docker_build    --git-commit a1234b567 --git-branch 'dev-'
 #ci-github-aws --c docker_tag      --git-commit a1234b567 --git-branch 'dev-'
 #ci-github-aws --c run_all          --git-commit a1234b567 --git-branch 'dev-' --pull-request=false --pull-request-str=false
+ci-github-aws --c deploy  --git-commit a1234b567 --git-branch 'dev-test'
 
 cd /Users/arturo/git/go/src/github.com/shootrnetwork/ci-github-aws
 # --c test_and_build \
