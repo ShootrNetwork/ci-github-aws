@@ -12,7 +12,7 @@ type Config struct {
 
 	PathInDocker         string `yaml:"path_in_docker"`
 	DockerBuildImageName string `yaml:"docker_build_image_name"`
-	MvnBuildArgs         string `yaml:"mvn_build_args"`
+	BuildCommand         string `yaml:"build_command"`
 
 	Default_deploy           bool   `yaml:"default_deploy"`
 	Default_test_and_build   bool   `yaml:"default_test_and_build"`
