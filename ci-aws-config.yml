@@ -1,6 +1,7 @@
 aws:
   region: 'eu-west-1'
   artifact_bucket: 'shootr-releases'
+  artifact_folder: 'artifacts'
 
 path_in_docker: '/ci'
 docker_build_image_name: java8-ci-slim
