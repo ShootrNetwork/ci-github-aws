@@ -27,7 +27,7 @@ func dockerBuildComponents(params Params) {
 }
 
 func buildAndPushDocker(component string, commit string) {
-	copy_jar(component)
+	copyJar(component)
 
 	image := fmt.Sprintf("fav24/shootr-%s:%s", component, commit)
 	path := fmt.Sprintf("./shootr-%s", component)
@@ -37,7 +37,7 @@ func buildAndPushDocker(component string, commit string) {
 	dockerPush(image)
 }
 
-func copy_jar(component string) {
+func copyJar(component string) {
 	from := fmt.Sprintf("./shootr-%s/target/shootr-%s.jar", component, component)
 	to := fmt.Sprintf("./shootr-%s/shootr-%s.jar", component, component)
 	log.Printf("Copying file from %s to %s", from, to)

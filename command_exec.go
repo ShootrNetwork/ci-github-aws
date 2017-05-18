@@ -7,18 +7,18 @@ import (
 	"time"
 )
 
-func exe_cmd_wait(command string, timeout time.Duration) {
+func executeCommandAndWait(command string, timeout time.Duration) {
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 
-	go exe_cmd(command, wg)
+	go executeCommand(command, wg)
 
 	if waitTimeout(wg, timeout) {
 		log.Fatalf("Command timed out: %s", command)
 	}
 }
 
-func exe_cmd(cmd string, wg *sync.WaitGroup) {
+func executeCommand(cmd string, wg *sync.WaitGroup) {
 	log.Printf("Command: %s", cmd)
 
 	out, err := exec.Command("/bin/sh", "-c", cmd).CombinedOutput()

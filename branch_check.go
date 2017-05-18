@@ -1,37 +1,37 @@
 package main
 
-func (self BranchCheck) shouldExecuteTestAndBuild() bool {
-	return self.BranchConfig.TestAndBuild
+func (branchCheck BranchCheck) shouldExecuteTestAndBuild() bool {
+	return branchCheck.BranchConfig.TestAndBuild
 }
 
-func (self BranchCheck) shouldExecuteUploadToS3() bool {
-	return !self.BranchConfig.IsPullRequest && self.BranchConfig.UploadToS3
+func (branchCheck BranchCheck) shouldExecuteUploadToS3() bool {
+	return !branchCheck.BranchConfig.IsPullRequest && branchCheck.BranchConfig.UploadToS3
 }
 
-func (self BranchCheck) shouldExecuteDockerBuild() bool {
-	return !self.BranchConfig.IsPullRequest && self.BranchConfig.DockerBuild
+func (branchCheck BranchCheck) shouldExecuteDockerBuild() bool {
+	return !branchCheck.BranchConfig.IsPullRequest && branchCheck.BranchConfig.DockerBuild
 }
 
-func (self BranchCheck) shouldExecuteDockerTag() bool {
-	return !self.BranchConfig.IsPullRequest && self.BranchConfig.DockerTag
+func (branchCheck BranchCheck) shouldExecuteDockerTag() bool {
+	return !branchCheck.BranchConfig.IsPullRequest && branchCheck.BranchConfig.DockerTag
 }
 
-func (self BranchCheck) getDockerTagValue() string {
-	return self.BranchConfig.DockerTagValue
+func (branchCheck BranchCheck) getDockerTagValue() string {
+	return branchCheck.BranchConfig.DockerTagValue
 }
 
-func (self BranchCheck) shouldDeploy() bool {
-	return !self.BranchConfig.IsPullRequest && self.BranchConfig.Deploy
+func (branchCheck BranchCheck) shouldDeploy() bool {
+	return !branchCheck.BranchConfig.IsPullRequest && branchCheck.BranchConfig.Deploy
 }
 
-func (self BranchCheck) getBackofficeUrl() string {
-	return self.BranchConfig.BackofficeUrl
+func (branchCheck BranchCheck) getBackofficeURL() string {
+	return branchCheck.BranchConfig.BackofficeUrl
 }
 
-func (self BranchCheck) getASG() string {
-	return self.BranchConfig.ASG
+func (branchCheck BranchCheck) getASG() string {
+	return branchCheck.BranchConfig.ASG
 }
 
-func (self BranchCheck) getDeployType() string {
-	return self.BranchConfig.DeployType
+func (branchCheck BranchCheck) getDeployType() string {
+	return branchCheck.BranchConfig.DeployType
 }

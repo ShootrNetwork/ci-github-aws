@@ -20,9 +20,9 @@ func deployComponents(params Params) {
 		start := time.Now()
 		log.Println("Deploy start...")
 
-		backofficeUrl := branchCheck.getBackofficeUrl()
-		if backofficeUrl != "" {
-			deployBackoffice(backofficeUrl, params.Pem)
+		backofficeURL := branchCheck.getBackofficeURL()
+		if backofficeURL != "" {
+			deployBackoffice(backofficeURL, params.Pem)
 		}
 
 		asg := branchCheck.getASG()
@@ -41,7 +41,7 @@ func deployComponents(params Params) {
 func deployBackoffice(url string, pem string) {
 	log.Printf("deploying backoffice: %s", url)
 	command := fmt.Sprintf("ssh -oStrictHostKeyChecking=no -i %s ubuntu@%s /home/ubuntu/set_env_and_start.sh", pem, url)
-	exe_cmd_wait(command, 10*time.Minute)
+	executeCommandAndWait(command, 10*time.Minute)
 	log.Printf("deploying backoffice: %s", command)
 }
 
