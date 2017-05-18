@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -28,7 +29,7 @@ func deployComponents(params Params) {
 		asg := branchCheck.getASG()
 		if asg != "" {
 			awsShootr.InitAWSSession(params.Config.AWS.Region)
-			deployASG(asg, branchCheck.getDeployType())
+			deployASG(asg, branchCheck.getTargetGroup(), branchCheck.getDeployType())
 		}
 
 		log.Printf("Deploy done in %s", time.Since(start))
@@ -45,7 +46,7 @@ func deployBackoffice(url string, pem string) {
 	log.Printf("deploying backoffice: %s", command)
 }
 
-func deployASG(asgName string, deployType string) {
+func deployASG(asgName string, targetGroup string, deployType string) {
 	asg := awsShootr.GetASG(asgName)
 	instanceIds := awsShootr.GetASGInstanceIdsFromGroup(asg)
 	log.Printf("ASG Instances: %+v", &instanceIds)
@@ -67,7 +68,7 @@ func deployASG(asgName string, deployType string) {
 	if deployType == "elb" {
 		doElbChecks(asg, newDesiredCapacity, instanceIds)
 	} else if deployType == "targetGroup" {
-		doTargetGroupChecks(asg, newDesiredCapacity, instanceIds)
+		doTargetGroupChecks(asg, targetGroup, newDesiredCapacity, instanceIds)
 	}
 
 	log.Printf("Setting ASG desired capacity back to %d", oldDesiredCapacity)
@@ -96,8 +97,18 @@ func doElbChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*
 	time.Sleep(10 * time.Second)
 }
 
-func doTargetGroupChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*string) {
-	targetGroupArn := asg.TargetGroupARNs[0]
+func doTargetGroupChecks(asg *autoscaling.Group, targetGroupName string, newDesiredCapacity int, instanceIds []*string) {
+	targetGroup := awsShootr.DescribeTargetGroup(targetGroupName)
+
+	for _, arn := range asg.TargetGroupARNs {
+		if arn == targetGroup.TargetGroupArn {
+			break
+		}
+		log.Fatal(errors.New("No matching targetGroup between target group name and asg"))
+	}
+
+	targetGroupArn := targetGroup.TargetGroupArn
+
 	log.Println("Checking for instance count in TargetGroup to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
 		return awsShootr.TargetGroupCheckInstanceCountIsDesired(*targetGroupArn, int(newDesiredCapacity))

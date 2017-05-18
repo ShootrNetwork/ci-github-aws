@@ -35,3 +35,7 @@ func (branchCheck BranchCheck) getASG() string {
 func (branchCheck BranchCheck) getDeployType() string {
 	return branchCheck.BranchConfig.DeployType
 }
+
+func (branchCheck BranchCheck) getTargetGroup() string {
+	return branchCheck.BranchConfig.TargetGroup
+}

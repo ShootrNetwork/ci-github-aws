@@ -79,6 +79,7 @@ branch_config:
   - branch: '^dev-'
     asg: asg-shootr-api-dev
     deploy_type: targetGroup
+    target_group: api-dev
     deploy: true
     test_and_build: true
     docker_build: true

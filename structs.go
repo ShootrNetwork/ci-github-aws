@@ -39,6 +39,7 @@ type BranchConfig struct {
 	ASG            string `yaml:"asg"`
 	Deploy         bool   `yaml:"deploy"`
 	DeployType     string `yaml:"deploy_type"`
+	TargetGroup    string `yaml:"target_group"`
 	TestAndBuild   bool   `yaml:"test_and_build"`
 	DockerBuild    bool   `yaml:"docker_build"`
 	DockerTag      bool   `yaml:"docker_tag"`

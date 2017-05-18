@@ -59,3 +59,19 @@ func AlbRemoveInstances(targetGroupArn string, instanceIds []*string) {
 		Targets:        albTargets,
 	})
 }
+
+func DescribeTargetGroup(groupName string) *elbv2.TargetGroup {
+	svc := elbv2.New(awsSession)
+
+	params := elbv2.DescribeTargetGroupsInput{
+		Names: []*string{aws.String(groupName)},
+	}
+
+	result, err := svc.DescribeTargetGroups(&params)
+
+	if err != nil {
+		return nil
+	}
+
+	return result.TargetGroups[0]
+}
