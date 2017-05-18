@@ -15,7 +15,7 @@ func dockerBuildComponents(params Params) {
 
 		commit := params.Git.Commit
 
-		for _, component := range components {
+		for _, component := range params.Config.Components {
 			buildAndPushDocker(component, commit)
 		}
 
@@ -26,20 +26,19 @@ func dockerBuildComponents(params Params) {
 	}
 }
 
-func buildAndPushDocker(component string, commit string) {
+func buildAndPushDocker(component Component, commit string) {
 	copyJar(component)
 
-	image := fmt.Sprintf("fav24/shootr-%s:%s", component, commit)
-	path := fmt.Sprintf("./shootr-%s", component)
-	dockerfile := path + "/Dockerfile"
+	image := fmt.Sprintf("%s:%s", component.DockerImage, commit)
+	dockerfile := component.DockerFilePath + "/Dockerfile"
 
-	dockerBuild(path, dockerfile, image)
+	dockerBuild(component.DockerFilePath, dockerfile, image)
 	dockerPush(image)
 }
 
-func copyJar(component string) {
-	from := fmt.Sprintf("./shootr-%s/target/shootr-%s.jar", component, component)
-	to := fmt.Sprintf("./shootr-%s/shootr-%s.jar", component, component)
+func copyJar(component Component) {
+	from := fmt.Sprintf("%s/%s", component.JarPath, component.JarName)
+	to := fmt.Sprintf("%s/%s", component.DockerFilePath, component.JarName)
 	log.Printf("Copying file from %s to %s", from, to)
 	copyFile(from, to)
 }

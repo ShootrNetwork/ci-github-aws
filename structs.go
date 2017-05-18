@@ -22,8 +22,16 @@ type Config struct {
 	Default_upload_to_s3     bool   `yaml:"default_upload_to_s3"`
 	Default_deploy_type      string `yaml:"default_deploy_type"`
 
+	Components    []Component    `yaml:"components"`
 	AllConfigs    []BranchConfig `yaml:"branch_config"`
 	CurrentConfig BranchConfig
+}
+
+type Component struct {
+	JarName        string `yaml:"jar_name"`
+	JarPath        string `yaml:"jar_path"`
+	DockerFilePath string `yaml:"docker_file_path"`
+	DockerImage    string `yaml:"docker_image"`
 }
 
 type BranchConfig struct {
@@ -36,13 +44,14 @@ type BranchConfig struct {
 	DockerTag      bool   `yaml:"docker_tag"`
 	DockerTagValue string `yaml:"docker_tag_value"`
 	UploadToS3     bool   `yaml:"upload_to_s3"`
-	BackofficeUrl  string `yaml:"backoffice_url"`
+	BackofficeURL  string `yaml:"backoffice_url"`
 	IsPullRequest  bool
 }
 
 type AWS struct {
 	Region         string `yaml:"region"`
 	ActifactBucket string `yaml:"artifact_bucket"`
+	ArtifactFolder string `yaml:"artifact_folder"`
 }
 
 type Git struct {

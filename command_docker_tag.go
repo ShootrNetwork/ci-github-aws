@@ -19,7 +19,7 @@ func dockerTagComponents(params Params) {
 
 		var wg sync.WaitGroup
 
-		for _, component := range components {
+		for _, component := range params.Config.Components {
 			wg.Add(1)
 			go pullTagAndPushAsync(component, commit, tagValue, &wg)
 		}
@@ -33,14 +33,14 @@ func dockerTagComponents(params Params) {
 	}
 }
 
-func pullTagAndPushAsync(component string, commit string, tagValue string, wg *sync.WaitGroup) {
+func pullTagAndPushAsync(component Component, commit string, tagValue string, wg *sync.WaitGroup) {
 	pullTagAndPush(component, commit, tagValue)
 	wg.Done()
 }
 
-func pullTagAndPush(component string, commit string, tagValue string) {
-	commitImage := fmt.Sprintf("fav24/shootr-%s:%s", component, commit)
-	tagImage := fmt.Sprintf("fav24/shootr-%s:%s", component, tagValue)
+func pullTagAndPush(component Component, commit string, tagValue string) {
+	commitImage := fmt.Sprintf("%s:%s", component.DockerImage, commit)
+	tagImage := fmt.Sprintf("%s:%s", component.DockerImage, tagValue)
 
 	dockerPull(commitImage)
 	dockerTag(commitImage, tagImage)

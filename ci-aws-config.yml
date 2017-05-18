@@ -14,6 +14,22 @@ default_docker_tag_value: ''
 default_upload_to_s3: false
 default_deploy_type: elb
 
+components:
+  - jar_name: shootr-api.jar
+    jar_path: ./shootr-api/target
+    docker_file_path: ./shootr-api
+    docker_image: fav24/shootr-api
+
+  - jar_name: shootr-services.jar
+    jar_path: ./shootr-services/target
+    docker_file_path: ./shootr-services
+    docker_image: fav24/shootr-services
+
+  - jar_name: shootr-backoffice.jar
+    jar_path: ./shootr-backoffice/target
+    docker_file_path: ./shootr-backoffice
+    docker_image: fav24/shootr-backoffice
+
 branch_config:
   - branch: '^develop$'
     asg: asg-shootr-api-tst

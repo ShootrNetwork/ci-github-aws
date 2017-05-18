@@ -22,9 +22,9 @@ func uploadArtifactsToS3(params Params) {
 
 		awsShootr.InitAWSSession(aws.Region)
 
-		for _, component := range components {
-			localFile := fmt.Sprintf("./shootr-%s/target/shootr-%s.jar", component, component)
-			s3File := fmt.Sprintf("artifacts/shootr-%s.jar.%s", component, commit)
+		for _, component := range params.Config.Components {
+			localFile := fmt.Sprintf("%s/%s", component.JarPath, component.JarName)
+			s3File := fmt.Sprintf("%s/%s.%s", aws.ArtifactFolder, component.JarName, commit)
 			awsShootr.UploadToS3(bucket, localFile, s3File)
 		}
 

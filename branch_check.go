@@ -25,7 +25,7 @@ func (branchCheck BranchCheck) shouldDeploy() bool {
 }
 
 func (branchCheck BranchCheck) getBackofficeURL() string {
-	return branchCheck.BranchConfig.BackofficeUrl
+	return branchCheck.BranchConfig.BackofficeURL
 }
 
 func (branchCheck BranchCheck) getASG() string {

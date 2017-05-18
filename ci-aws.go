@@ -2,11 +2,13 @@ package main
 
 import "log"
 
+/*
 var components = []string{
 	"api",
 	"services",
 	"backoffice",
 }
+*/
 
 func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
