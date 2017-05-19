@@ -99,27 +99,27 @@ func doElbChecks(asg *autoscaling.Group, newDesiredCapacity int, instanceIds []*
 
 func doTargetGroupChecks(asg *autoscaling.Group, targetGroupName string, newDesiredCapacity int, instanceIds []*string) {
 	targetGroup := awsShootr.DescribeTargetGroup(targetGroupName)
+	targetGroupArn := *targetGroup.TargetGroupArn
 
 	for _, arn := range asg.TargetGroupARNs {
-		if arn == targetGroup.TargetGroupArn {
+		log.Printf("comparing arn %s with %s", targetGroupArn, *arn)
+		if *arn == targetGroupArn {
 			break
 		}
 		log.Fatal(errors.New("No matching targetGroup between target group name and asg"))
 	}
 
-	targetGroupArn := targetGroup.TargetGroupArn
-
 	log.Println("Checking for instance count in TargetGroup to be ok")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return awsShootr.TargetGroupCheckInstanceCountIsDesired(*targetGroupArn, int(newDesiredCapacity))
+		return awsShootr.TargetGroupCheckInstanceCountIsDesired(targetGroupArn, int(newDesiredCapacity))
 	})
 
 	log.Println("Waiting for all Target Group instances to be healthy")
 	executeWithTimeout(timeout, timeBetweenExecutions, func() error {
-		return awsShootr.AlbCheckInstancesInService(*targetGroupArn)
+		return awsShootr.AlbCheckInstancesInService(targetGroupArn)
 	})
 
 	log.Printf("Removing original instances from ALB to drain connections: %v", instanceIds)
-	awsShootr.AlbRemoveInstances(*targetGroupArn, instanceIds)
+	awsShootr.AlbRemoveInstances(targetGroupArn, instanceIds)
 	time.Sleep(10 * time.Second)
 }
